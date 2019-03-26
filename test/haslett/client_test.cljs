@@ -8,6 +8,7 @@
 (deftest test-defaults
   (async done
     (go (let [stream (<! (ws/connect "ws://localhost:3200"))]
+          (is (ws/connected? stream))
           (>! (:sink stream) "Hello World")
           (is (= (<! (:source stream)) "Hello World"))
           (is (:connected? stream))
@@ -51,7 +52,14 @@
 (deftest test-connection-fail
   (async done
     (go (let [stream (<! (ws/connect "ws://localhost:3201"))]
-          (is (not (:connected? stream)))
+          (is (not (ws/connected? stream)))
           (is (= (<! (:source stream)) nil))
           (is (= (<! (:close-status stream)) {:code 1006, :reason ""}))
+          (done)))))
+
+(deftest test-local-close
+  (async done
+    (go (let [stream (<! (ws/connect "ws://localhost:3200"))]
+          (a/close! (:sink stream))
+          (is (= (<! (:close-status stream)) {:code 0, :reason "Closed by creator"}))
           (done)))))
