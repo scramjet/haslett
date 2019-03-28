@@ -39,7 +39,7 @@
      (set! (.-onopen socket)     (fn [_] (a/put! return (assoc stream :connected? true))))
      (set! (.-onmessage socket)  (fn [e] (a/put! source (fmt/read format (.-data e)))))
      (set! (.-onclose socket)    (fn [e]
-                                   (a/put! status {:reason (.-reason e), :code (.-code e)})
+                                   (a/put! close-status {:reason (.-reason e), :code (.-code e)})
                                    (a/close! source)
                                    (a/close! sink)
                                    (a/put! return stream)))
