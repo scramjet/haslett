@@ -36,7 +36,7 @@
          return       (a/promise-chan)
          stream       {:socket socket, :source source, :sink sink, :close-status close-status}]
      (set! (.-binaryType socket) (name (:binary-type options :arraybuffer)))
-     (set! (.-onopen socket)     (fn [_] (a/put! return (assoc stream :connected? true))))
+     (set! (.-onopen socket)     (fn [_] (a/put! return stream)))
      (set! (.-onmessage socket)  (fn [e] (a/put! source (fmt/read format (.-data e)))))
      (set! (.-onclose socket)    (fn [e]
                                    (a/put! close-status {:reason (.-reason e), :code (.-code e)})
